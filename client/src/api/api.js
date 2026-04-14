@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE || '/api';
+const API_BASE = import.meta.env.VITE_API_BASE || 'https://ecommerce-2-lbrm.onrender.com/api';
 
 const fetchJSON = async (url, options = {}) => {
   const controller = new AbortController();

@@ -23,6 +23,8 @@ function save() {
 }
 
 // Wrapper that matches the async sqlite API used by our models
+let _inTransaction = false;
+
 const db = {
   all(sql, ...params) {
     const stmt = database.prepare(sql);
@@ -42,6 +44,27 @@ const db = {
   },
 
   run(sql, ...params) {
+    const upper = sql.trim().toUpperCase();
+
+    // Handle transaction control statements
+    if (upper.startsWith('BEGIN')) {
+      database.run(sql);
+      _inTransaction = true;
+      return { lastID: 0, changes: 0 };
+    }
+    if (upper.startsWith('COMMIT')) {
+      database.run(sql);
+      _inTransaction = false;
+      save();
+      return { lastID: 0, changes: 0 };
+    }
+    if (upper.startsWith('ROLLBACK')) {
+      database.run(sql);
+      _inTransaction = false;
+      return { lastID: 0, changes: 0 };
+    }
+
+    // Normal statement
     if (params.length) {
       database.run(sql, params);
     } else {
@@ -50,7 +73,12 @@ const db = {
     const changes = database.getRowsModified();
     const [result] = database.exec('SELECT last_insert_rowid() as lastID');
     const lastID = result ? result.values[0][0] : 0;
-    save();
+
+    // Only save to disk outside of transactions
+    if (!_inTransaction) {
+      save();
+    }
+
     return { lastID, changes };
   },
 
