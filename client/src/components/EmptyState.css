@@ -1,0 +1,43 @@
+.empty-state-container {
+  text-align: center;
+  padding: 60px 20px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: emptyFadeIn 0.4s ease;
+}
+
+@keyframes emptyFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.empty-state-icon-wrap {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+}
+
+.empty-state-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.empty-state-subtitle {
+  font-size: 15px;
+  color: var(--color-text-secondary);
+  max-width: 360px;
+  line-height: 1.5;
+}
+
+.empty-state-btn {
+  margin-top: 8px;
+}

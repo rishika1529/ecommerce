@@ -1,0 +1,19 @@
+# Render Blueprint — Auto-deploy configuration
+# See: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: shopverse-api
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: DB_PATH
+        value: ./data/ecommerce.db
+      - key: NODE_ENV
+        value: production
+      - key: CORS_ORIGIN
+        value: https://your-client-domain.vercel.app

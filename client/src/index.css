@@ -1,0 +1,179 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --color-header: #131921;
+  --color-header-light: #232f3e;
+  --color-accent: #ff9900;
+  --color-accent-hover: #e68a00;
+  --color-accent-light: #febd69;
+  --color-buy: #ffa41c;
+  --color-buy-hover: #fa8900;
+  --color-cta: #ffd814;
+  --color-cta-hover: #f7ca00;
+  --color-cta-text: #0f1111;
+  --color-bg: #eaeded;
+  --color-card: #ffffff;
+  --color-text: #0f1111;
+  --color-text-secondary: #565959;
+  --color-text-link: #007185;
+  --color-text-link-hover: #c7511f;
+  --color-star: #de7921;
+  --color-price: #0f1111;
+  --color-deal: #cc0c39;
+  --color-success: #067d62;
+  --color-border: #d5d9d9;
+  --color-border-light: #eee;
+  --color-input-border: #888c8c;
+  --color-input-focus: #e77600;
+  --shadow-card: 0 2px 5px rgba(15,17,21,.15);
+  --shadow-hover: 0 4px 12px rgba(15,17,21,.2);
+  --radius: 8px;
+  --radius-sm: 4px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --max-width: 1440px;
+  --transition: all .2s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--color-text-link); text-decoration: none; transition: var(--transition); }
+a:hover { color: var(--color-text-link-hover); text-decoration: underline; }
+
+button {
+  cursor: pointer;
+  font-family: var(--font);
+  border: none;
+  outline: none;
+  transition: var(--transition);
+}
+
+img { max-width: 100%; display: block; }
+
+.container { max-width: var(--max-width); margin: 0 auto; padding: 0 20px; }
+
+/* Button styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.btn-primary {
+  background: linear-gradient(to bottom, var(--color-cta), var(--color-cta-hover));
+  color: var(--color-cta-text);
+  border: 1px solid #c19000;
+}
+.btn-primary:hover:not(:disabled) { filter: brightness(0.95); }
+
+.btn-accent {
+  background: linear-gradient(to bottom, var(--color-buy), var(--color-buy-hover));
+  color: #fff;
+  border: 1px solid #c17b1a;
+}
+.btn-accent:hover:not(:disabled) { filter: brightness(0.95); }
+
+.btn-lg { padding: 12px 24px; font-size: 14px; border-radius: 24px; }
+
+/* Disabled button styles */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: none !important;
+  transform: none !important;
+}
+
+/* Rating stars */
+.stars { color: var(--color-star); display: inline-flex; gap: 1px; }
+
+/* Price formatting */
+.price { font-weight: 700; color: var(--color-price); }
+.price-symbol { font-size: 13px; vertical-align: super; }
+.price-whole { font-size: 28px; line-height: 1; }
+.price-fraction { font-size: 13px; vertical-align: super; }
+
+/* Skeleton loading */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* Spinner animation */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.spinner {
+  animation: spin 0.8s linear infinite;
+}
+
+/* Fallback image */
+.fallback-img {
+  opacity: 0.5;
+  filter: grayscale(100%);
+}
+
+/* Form error styles */
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-deal);
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+  animation: errorFadeIn 0.2s ease;
+}
+@keyframes errorFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.has-error input {
+  border-color: var(--color-deal) !important;
+  box-shadow: 0 0 0 3px rgba(204,12,57,.1) !important;
+}
+
+/* Breadcrumb */
+.pp-breadcrumb {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-bottom: 16px;
+}
+.pp-breadcrumb a {
+  color: var(--color-text-link);
+  text-decoration: none;
+}
+.pp-breadcrumb a:hover {
+  color: var(--color-text-link-hover);
+  text-decoration: underline;
+}
+.pp-breadcrumb span {
+  color: var(--color-text-secondary);
+}
+
+/* Responsive helpers */
+@media (max-width: 480px) {
+  .container { padding: 0 12px; }
+  .price-whole { font-size: 22px; }
+}

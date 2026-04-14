@@ -1,0 +1,129 @@
+.product-page { padding: 24px 20px 60px; }
+
+.pp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 280px;
+  gap: 24px;
+  align-items: start;
+}
+
+.pp-title {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--color-text);
+}
+
+.pp-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+}
+.pp-rating-num { font-size: 14px; color: var(--color-text-link); font-weight: 600; }
+.pp-reviews { font-size: 14px; }
+
+.pp-separator {
+  height: 1px;
+  background: var(--color-border-light);
+  margin: 16px 0;
+}
+
+.pp-price-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pp-price-label { font-size: 14px; color: var(--color-text-secondary); }
+
+.pp-perks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+.pp-perk {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.pp-about { margin-top: 0; }
+.pp-about h3, .pp-specs h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.pp-about p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.pp-specs { margin-top: 20px; }
+.specs-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.specs-table tr:nth-child(even) { background: #f7f7f7; }
+.specs-table td {
+  padding: 10px 14px;
+  font-size: 13px;
+  border: 1px solid var(--color-border-light);
+}
+.spec-key {
+  font-weight: 600;
+  color: var(--color-text);
+  width: 40%;
+  background: #f0f2f2;
+}
+.spec-val { color: var(--color-text-secondary); }
+
+/* Buy box */
+.buybox-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: sticky;
+  top: 120px;
+}
+
+.buybox-delivery {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.buybox-stock { font-size: 18px; font-weight: 500; }
+.buybox-stock.in { color: var(--color-success); }
+.buybox-stock.out { color: var(--color-deal); }
+
+.buybox-btn { width: 100%; }
+
+.buybox-meta {
+  border-top: 1px solid var(--color-border-light);
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+}
+.meta-label { color: var(--color-text-secondary); margin-right: 8px; }
+
+@media (max-width: 1024px) {
+  .pp-grid { grid-template-columns: 1fr 1fr; }
+  .pp-buybox { grid-column: 1 / -1; }
+  .buybox-card { position: static; }
+}
+@media (max-width: 640px) {
+  .pp-grid { grid-template-columns: 1fr; }
+  .pp-title { font-size: 20px; }
+}
