@@ -2,17 +2,17 @@ import * as cartModel from '../models/cartModel.js';
 import * as productModel from '../models/productModel.js';
 import { isPositiveInt } from '../middleware/validate.js';
 
-export const getCart = (req, res) => {
+export const getCart = async (req, res) => {
   try {
-    const items = cartModel.getCart();
-    const count = cartModel.getCartCount();
+    const items = await cartModel.getCart();
+    const count = await cartModel.getCartCount();
     res.json({ items, count });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-export const addToCart = (req, res) => {
+export const addToCart = async (req, res) => {
   try {
     const { product_id, quantity } = req.body;
 
@@ -28,13 +28,13 @@ export const addToCart = (req, res) => {
     }
 
     // Check product exists
-    const product = productModel.getById(product_id);
+    const product = await productModel.getById(product_id);
     if (!product) {
       return res.status(404).json({ error: 'Product not found.' });
     }
 
     // Check stock availability
-    const existingItem = cartModel.getItemByProductId(product_id);
+    const existingItem = await cartModel.getItemByProductId(product_id);
     const currentQtyInCart = existingItem ? existingItem.quantity : 0;
     const totalRequested = currentQtyInCart + qty;
 
@@ -46,15 +46,15 @@ export const addToCart = (req, res) => {
       });
     }
 
-    const item = cartModel.addItem(product_id, qty);
-    const count = cartModel.getCartCount();
+    const item = await cartModel.addItem(product_id, qty);
+    const count = await cartModel.getCartCount();
     res.status(201).json({ item, count });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-export const updateCartItem = (req, res) => {
+export const updateCartItem = async (req, res) => {
   try {
     if (!isPositiveInt(req.params.id)) {
       return res.status(400).json({ error: 'Invalid cart item ID.' });
@@ -66,12 +66,12 @@ export const updateCartItem = (req, res) => {
     }
 
     // Check stock for the update
-    const cartItem = cartModel.getItemById(req.params.id);
+    const cartItem = await cartModel.getItemById(req.params.id);
     if (!cartItem) {
       return res.status(404).json({ error: 'Cart item not found.' });
     }
 
-    const product = productModel.getById(cartItem.product_id);
+    const product = await productModel.getById(cartItem.product_id);
     if (product && quantity > product.stock) {
       return res.status(409).json({
         error: `Insufficient stock. Only ${product.stock} available.`,
@@ -79,22 +79,22 @@ export const updateCartItem = (req, res) => {
       });
     }
 
-    const item = cartModel.updateQuantity(req.params.id, quantity);
-    const count = cartModel.getCartCount();
+    const item = await cartModel.updateQuantity(req.params.id, quantity);
+    const count = await cartModel.getCartCount();
     res.json({ item, count });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-export const removeCartItem = (req, res) => {
+export const removeCartItem = async (req, res) => {
   try {
     if (!isPositiveInt(req.params.id)) {
       return res.status(400).json({ error: 'Invalid cart item ID.' });
     }
 
-    cartModel.removeItem(req.params.id);
-    const count = cartModel.getCartCount();
+    await cartModel.removeItem(req.params.id);
+    const count = await cartModel.getCartCount();
     res.json({ success: true, count });
   } catch (err) {
     res.status(500).json({ error: err.message });

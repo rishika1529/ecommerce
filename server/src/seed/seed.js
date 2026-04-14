@@ -2,18 +2,20 @@ import 'dotenv/config';
 import db from '../config/db.js';
 
 // Clear existing data
-db.exec(`DELETE FROM order_items; DELETE FROM orders; DELETE FROM cart_items; DELETE FROM products; DELETE FROM categories; DELETE FROM users;`);
+await db.exec(`DELETE FROM order_items; DELETE FROM orders; DELETE FROM cart_items; DELETE FROM products; DELETE FROM categories; DELETE FROM users;`);
 
 // Demo user
-db.prepare(`INSERT INTO users (id, name, email) VALUES (1, 'Demo User', 'demo@example.com')`).run();
+await db.run(`INSERT INTO users (id, name, email) VALUES (1, 'Demo User', 'demo@example.com')`);
 
 // Categories
 const cats = ['Electronics', 'Books', 'Clothing', 'Home & Kitchen', 'Sports & Outdoors', 'Beauty'];
-const insertCat = db.prepare(`INSERT INTO categories (name) VALUES (?)`);
-cats.forEach(c => insertCat.run(c));
+for (const c of cats) {
+  await db.run(`INSERT INTO categories (name) VALUES (?)`, c);
+}
 
+const catRows = await db.all(`SELECT * FROM categories`);
 const catIds = {};
-db.prepare(`SELECT * FROM categories`).all().forEach(c => catIds[c.name] = c.id);
+catRows.forEach(c => catIds[c.name] = c.id);
 
 // Products
 const products = [
@@ -46,7 +48,7 @@ const products = [
   { name: 'Nike Dri-FIT Running Shirt', description: 'Sweat-wicking technology keeps you dry and comfortable. Lightweight mesh fabric for breathability. Standard fit for a relaxed feel.', price: 35.00, stock: 80, category: 'Clothing', rating: 4.5, reviews: 5678,
     images: ['https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&h=600&fit=crop', 'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600&h=600&fit=crop'],
     specs: { Brand: 'Nike', Material: 'Polyester Dri-FIT', Fit: 'Standard', Care: 'Machine Wash' }},
-  { name: 'Levi\'s 501 Original Fit Jeans', description: 'The iconic straight fit with a button fly. Sits at the waist. 100% cotton for authentic denim feel. The jean that started it all.', price: 69.50, stock: 55, category: 'Clothing', rating: 4.4, reviews: 12345,
+  { name: "Levi's 501 Original Fit Jeans", description: 'The iconic straight fit with a button fly. Sits at the waist. 100% cotton for authentic denim feel. The jean that started it all.', price: 69.50, stock: 55, category: 'Clothing', rating: 4.4, reviews: 12345,
     images: ['https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&h=600&fit=crop', 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600&h=600&fit=crop'],
     specs: { Brand: "Levi's", Fit: '501 Original', Material: '100% Cotton', Rise: 'Regular', Closure: 'Button Fly' }},
   { name: 'North Face Puffer Jacket', description: 'Insulated with 700-fill goose down. Water-resistant DryVent shell. Packable design folds into internal pocket. Perfect for cold weather adventures.', price: 249.00, stock: 30, category: 'Clothing', rating: 4.7, reviews: 8901,
@@ -87,17 +89,12 @@ const products = [
     specs: { Brand: 'Olaplex', Product: 'No.3 Hair Perfector', Size: '3.3 fl oz', Hair_Type: 'All Types', Treatment: 'Bond Building' }},
 ];
 
-const insertProduct = db.prepare(`
-  INSERT INTO products (name, description, price, stock, category_id, images, specs, rating, review_count)
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-`);
-
-const seedProducts = db.transaction(() => {
-  for (const p of products) {
-    insertProduct.run(p.name, p.description, p.price, p.stock, catIds[p.category], JSON.stringify(p.images), JSON.stringify(p.specs), p.rating, p.reviews);
-  }
-});
-seedProducts();
+for (const p of products) {
+  await db.run(
+    `INSERT INTO products (name, description, price, stock, category_id, images, specs, rating, review_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    p.name, p.description, p.price, p.stock, catIds[p.category], JSON.stringify(p.images), JSON.stringify(p.specs), p.rating, p.reviews
+  );
+}
 
 console.log(`Seeded ${products.length} products across ${cats.length} categories.`);
 process.exit(0);

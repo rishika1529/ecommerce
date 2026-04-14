@@ -1,7 +1,7 @@
 import * as orderModel from '../models/orderModel.js';
 import { isPositiveInt, validateAddress, sanitizeBody } from '../middleware/validate.js';
 
-export const placeOrder = (req, res) => {
+export const placeOrder = async (req, res) => {
   try {
     // Sanitize all string inputs
     const sanitized = sanitizeBody(req.body);
@@ -12,7 +12,7 @@ export const placeOrder = (req, res) => {
       return res.status(400).json({ error: errors[0].message, fieldErrors: errors });
     }
 
-    const order = orderModel.createOrder(sanitized);
+    const order = await orderModel.createOrder(sanitized);
 
     // Return with user-friendly order ID format
     res.status(201).json({
@@ -28,13 +28,13 @@ export const placeOrder = (req, res) => {
   }
 };
 
-export const getOrder = (req, res) => {
+export const getOrder = async (req, res) => {
   try {
     if (!isPositiveInt(req.params.id)) {
       return res.status(400).json({ error: 'Invalid order ID. Must be a positive integer.' });
     }
 
-    const order = orderModel.getOrderById(req.params.id);
+    const order = await orderModel.getOrderById(req.params.id);
     if (!order) return res.status(404).json({ error: 'Order not found' });
 
     // Add user-friendly display ID

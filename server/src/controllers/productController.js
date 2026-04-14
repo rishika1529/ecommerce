@@ -1,7 +1,7 @@
 import * as productModel from '../models/productModel.js';
 import { isPositiveInt, sanitizeString } from '../middleware/validate.js';
 
-export const getProducts = (req, res) => {
+export const getProducts = async (req, res) => {
   try {
     const search = req.query.search ? sanitizeString(req.query.search) : undefined;
     const category = req.query.category;
@@ -10,20 +10,20 @@ export const getProducts = (req, res) => {
       return res.status(400).json({ error: 'Invalid category ID' });
     }
 
-    const products = productModel.getAll(search, category);
+    const products = await productModel.getAll(search, category);
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-export const getProduct = (req, res) => {
+export const getProduct = async (req, res) => {
   try {
     if (!isPositiveInt(req.params.id)) {
       return res.status(400).json({ error: 'Invalid product ID. Must be a positive integer.' });
     }
 
-    const product = productModel.getById(req.params.id);
+    const product = await productModel.getById(req.params.id);
     if (!product) return res.status(404).json({ error: 'Product not found' });
     res.json(product);
   } catch (err) {
@@ -31,9 +31,9 @@ export const getProduct = (req, res) => {
   }
 };
 
-export const getCategories = (req, res) => {
+export const getCategories = async (req, res) => {
   try {
-    res.json(productModel.getCategories());
+    res.json(await productModel.getCategories());
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

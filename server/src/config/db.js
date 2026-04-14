@@ -1,16 +1,21 @@
-import Database from 'better-sqlite3';
+import sqlite3 from 'sqlite3';
+import { open } from 'sqlite';
 import { mkdirSync } from 'fs';
 import { dirname } from 'path';
 
 const dbPath = process.env.DB_PATH || './data/ecommerce.db';
 mkdirSync(dirname(dbPath), { recursive: true });
 
-const db = new Database(dbPath);
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
+const db = await open({
+  filename: dbPath,
+  driver: sqlite3.Database
+});
+
+await db.run('PRAGMA journal_mode = WAL');
+await db.run('PRAGMA foreign_keys = ON');
 
 // Initialize schema
-db.exec(`
+await db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
