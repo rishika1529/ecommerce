@@ -1,7 +1,14 @@
 import 'dotenv/config';
 import db from '../config/db.js';
 
-// Clear existing data
+// Skip seeding if products already exist
+const existing = db.get('SELECT COUNT(*) as count FROM products');
+if (existing && existing.count > 0) {
+  console.log(`Database already has ${existing.count} products, skipping seed.`);
+  process.exit(0);
+}
+
+// Clear existing data (safety)
 await db.exec(`DELETE FROM order_items; DELETE FROM orders; DELETE FROM cart_items; DELETE FROM products; DELETE FROM categories; DELETE FROM users;`);
 
 // Demo user
