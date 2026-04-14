@@ -1,21 +1,67 @@
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
-import { mkdirSync } from 'fs';
+import initSqlJs from 'sql.js';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
 
 const dbPath = process.env.DB_PATH || './data/ecommerce.db';
 mkdirSync(dirname(dbPath), { recursive: true });
 
-const db = await open({
-  filename: dbPath,
-  driver: sqlite3.Database
-});
+// Initialize sql.js (pure WASM — no native bindings!)
+const SQL = await initSqlJs();
 
-await db.run('PRAGMA journal_mode = WAL');
-await db.run('PRAGMA foreign_keys = ON');
+let database;
+if (existsSync(dbPath)) {
+  database = new SQL.Database(readFileSync(dbPath));
+} else {
+  database = new SQL.Database();
+}
+
+database.run('PRAGMA foreign_keys = ON');
+
+// Persist database to disk
+function save() {
+  writeFileSync(dbPath, Buffer.from(database.export()));
+}
+
+// Wrapper that matches the async sqlite API used by our models
+const db = {
+  all(sql, ...params) {
+    const stmt = database.prepare(sql);
+    if (params.length) stmt.bind(params);
+    const rows = [];
+    while (stmt.step()) rows.push(stmt.getAsObject());
+    stmt.free();
+    return rows;
+  },
+
+  get(sql, ...params) {
+    const stmt = database.prepare(sql);
+    if (params.length) stmt.bind(params);
+    const row = stmt.step() ? stmt.getAsObject() : undefined;
+    stmt.free();
+    return row;
+  },
+
+  run(sql, ...params) {
+    if (params.length) {
+      database.run(sql, params);
+    } else {
+      database.run(sql);
+    }
+    const changes = database.getRowsModified();
+    const [result] = database.exec('SELECT last_insert_rowid() as lastID');
+    const lastID = result ? result.values[0][0] : 0;
+    save();
+    return { lastID, changes };
+  },
+
+  exec(sql) {
+    database.exec(sql);
+    save();
+  }
+};
 
 // Initialize schema
-await db.exec(`
+db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
